@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+require_relative '../lib/any_good'
+
+abort 'Usage: `any_good <gemname>`' if ARGV.empty?
+
+AnyGood.new(ARGV.shift).fetch.report

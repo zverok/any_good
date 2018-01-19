@@ -9,6 +9,13 @@ A thing to quickly evaluate Ruby gem maturity and answer "Is it any good?". Like
 Just a report of some numbers and facts from rubygems.org and GitHub repo of the gem in
 question, to understand how risky it would be to use it.
 
+## Usage
+
+```
+$ gem install any_good
+$ any_good <gem_name>
+```
+
 ## Why?
 
 I find myself constantly repeating this process for some new gems I spotted somewhere: going to

@@ -82,7 +82,7 @@ class AnyGood
     res = data.open_issues.count
     res == 50 ? '50+' : res
   }
-  metric('...without reaction', thresholds: [-20, -5]) {
+  metric('...without reaction', thresholds: [-20, -4]) {
     data.open_issues.reject { |i| i[:labels].any? || i[:comments] > 0 }.count
   }
   metric('...last reaction', thresholds: [T.month.decrease(now), T.week.decrease(now)]) {

@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/any_good.svg)](http://badge.fury.io/rb/any_good)
+
 ## What's this?
 
 A thing to quickly evaluate Ruby gem maturity and answer "Is it any good?". Like this:

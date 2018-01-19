@@ -54,7 +54,7 @@ class AnyGood
       end
     end
 
-    def deduce_color(yellow = nil, red = nil)
+    def deduce_color(red = nil, yellow = nil)
       return :dark if value.nil?
       return :white if !yellow # no thresholds given
 

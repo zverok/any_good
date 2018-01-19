@@ -67,14 +67,14 @@ class AnyGood
   now = Time.now
 
   metric('Downloads', thresholds: [5_000, 10_000]) { data.gem['downloads'] }
-  metric('Latest version', thresholds: [T.month.decrease(now, 2), T.year.decrease(now)]) {
+  metric('Latest version', thresholds: [T.year.decrease(now), T.month.decrease(now, 2)]) {
     Time.parse(data.gem_versions.first['created_at'])
   }
   metric('Used by', thresholds: [10, 100]) { data.gem_rev_deps.count }
 
   metric('Stars', thresholds: [100, 500]) { data.repo[:stargazers_count] }
   metric('Forks', thresholds: [5, 20]) { data.repo[:forks_count] }
-  metric('Last commit', thresholds: [T.month.decrease(now), T.month.decrease(now, 4)]) {
+  metric('Last commit', thresholds: [T.month.decrease(now, 4), T.month.decrease(now)]) {
     data.last_commit.dig(:commit, :committer, :date)
   }
 
@@ -82,10 +82,10 @@ class AnyGood
     res = data.open_issues.count
     res == 50 ? '50+' : res
   }
-  metric('...without reaction', thresholds: [-5, -20]) {
+  metric('...without reaction', thresholds: [-20, -5]) {
     data.open_issues.reject { |i| i[:labels].any? || i[:comments] > 0 }.count
   }
-  metric('...last reaction', thresholds: [T.week.decrease(now), T.month.decrease(now)]) {
+  metric('...last reaction', thresholds: [T.month.decrease(now), T.week.decrease(now)]) {
     data.open_issues.detect { |i| i[:labels].any? || i[:comments] > 0 }&.fetch(:updated_at)
   }
   metric('Closed issues') {

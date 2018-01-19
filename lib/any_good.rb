@@ -18,6 +18,8 @@ class AnyGood
       end
   end
 
+  GITHUB_URI_PATTERN = %r{^https?://(www\.)?github\.com/}
+
   def fetch
     data = {
       gem: Gems.info(name),
@@ -26,7 +28,7 @@ class AnyGood
     }
 
     repo_id = [data[:gem]['source_code_uri'], data[:gem]['homepage_uri']]
-      .grep(%r{^https?://github\.com/}).first&.sub(%r{^https?://github\.com/}, '')
+      .grep(GITHUB_URI_PATTERN).first&.sub(GITHUB_URI_PATTERN, '')
 
     if repo_id
       data.merge!(

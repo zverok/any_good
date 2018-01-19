@@ -41,6 +41,8 @@ have been released 4 years ago, yet it is robust and widely used.
 
 ## GitHub?
 
+A large part of stats is taken from gem's GitHub repo.
+
 Yes, the gem is not required to have the link to sources published. Yes, there are gems with sources
 on GitLab, BitBucket, or even SourceForge, God forbid. But again, as with colors, my _subjective_
 experience says me to check its GitHub, if it is accessible. So the `any_good` does.

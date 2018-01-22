@@ -28,7 +28,7 @@ class AnyGood
     }
 
     repo_id = [data[:gem]['source_code_uri'], data[:gem]['homepage_uri']]
-      .grep(GITHUB_URI_PATTERN).first&.sub(GITHUB_URI_PATTERN, '')
+      .grep(GITHUB_URI_PATTERN).first&.sub(GITHUB_URI_PATTERN, '')&.chomp '/'
 
     if repo_id
       data.merge!(

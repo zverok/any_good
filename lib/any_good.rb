@@ -27,8 +27,7 @@ class AnyGood
       gem_rev_deps: Gems.reverse_dependencies(name)
     }
 
-    repo_id = [data[:gem]['source_code_uri'], data[:gem]['homepage_uri']]
-      .grep(GITHUB_URI_PATTERN).first&.sub(GITHUB_URI_PATTERN, '')&.chomp '/'
+    repo_id = detect_repo_id(data[:gem]['source_code_uri'], data[:gem]['homepage_uri'])
 
     if repo_id
       data.merge!(
@@ -93,4 +92,11 @@ class AnyGood
     res == 50 ? '50+' : res
   }
   metric('...last closed') { data.closed_issues.first&.fetch(:closed_at) }
+
+  private
+
+  def detect_repo_id(*urls)
+    repo_url = urls.grep(GITHUB_URI_PATTERN).first or return nil
+    Octokit::Repository.from_url(repo_url).slug
+  end
 end

@@ -16,6 +16,15 @@ $ gem install any_good
 $ any_good <gem_name>
 ```
 
+### RVM
+
+Under RVM your any_good command may only be available under the ruby you install any_good into. To prevent this, and to prevent gem conflicts, install any_good into a dedicated gemset and create wrapper scripts:
+
+```
+rvm default@any_good --create do gem install any_good
+rvm wrapper default@any_good --no-prefix any_good
+```
+
 ## Why?
 
 I find myself constantly repeating this process for some new gems I spotted somewhere: going to

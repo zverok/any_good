@@ -21,26 +21,11 @@ class AnyGood
   GITHUB_URI_PATTERN = %r{^https?://(www\.)?github\.com/}
 
   def fetch
-    data = {
-      gem: Gems.info(name),
-      gem_versions: Gems.versions(name),
-      gem_rev_deps: Gems.reverse_dependencies(name)
-    }
+    gem_info = fetch_gem
+    repo_id = detect_repo_id(*gem_info[:gem_info].values_at('source_code_uri', 'homepage_uri'))
+    github_info = fetch_github(repo_id)
 
-    repo_id = detect_repo_id(data[:gem]['source_code_uri'], data[:gem]['homepage_uri'])
-
-    if repo_id
-      data.merge!(
-        repo: @github_client.repository(repo_id).to_h,
-        open_issues: @github_client.issues(repo_id, state: 'open', per_page: 50).map(&:to_h),
-        closed_issues: @github_client.issues(repo_id, state: 'closed', per_page: 50).map(&:to_h),
-        last_commit: @github_client.commits(repo_id, per_page: 1).first.to_h
-        # open_prs: @github_client.issues(repo_id, state: 'open').map(&:to_h)
-        # closed_prs: @github_client.issues(repo_id, state: 'closed').map(&:to_h)
-      )
-    end
-
-    @data = OpenStruct.new(data)
+    @data = OpenStruct.new(gem_info.merge(github_info))
 
     self
   end
@@ -65,7 +50,7 @@ class AnyGood
   T = TimeMath
   now = Time.now
 
-  metric('Downloads', thresholds: [5_000, 10_000]) { data.gem['downloads'] }
+  metric('Downloads', thresholds: [5_000, 10_000]) { data.gem_info['downloads'] }
   metric('Latest version', thresholds: [T.year.decrease(now), T.month.decrease(now, 2)]) {
     Time.parse(data.gem_versions.first['created_at'])
   }
@@ -94,6 +79,30 @@ class AnyGood
   metric('...last closed') { data.closed_issues.first&.fetch(:closed_at) }
 
   private
+
+  def fetch_gem
+    {
+      gem_info: Gems.info(name),
+      gem_versions: Gems.versions(name),
+      gem_rev_deps: Gems.reverse_dependencies(name)
+    }
+  rescue JSON::ParserError => e
+    # Gems have no cleaner way to indicate gem does not exist :shrug:
+    raise unless e.message.include?('This rubygem could not be found.')
+    abort("Gem #{name} does not exist.")
+  end
+
+  def fetch_github(repo_id)
+    return {} unless repo_id
+    {
+      repo: @github_client.repository(repo_id).to_h,
+      open_issues: @github_client.issues(repo_id, state: 'open', per_page: 50).map(&:to_h),
+      closed_issues: @github_client.issues(repo_id, state: 'closed', per_page: 50).map(&:to_h),
+      last_commit: @github_client.commits(repo_id, per_page: 1).first.to_h
+      # open_prs: @github_client.issues(repo_id, state: 'open').map(&:to_h)
+      # closed_prs: @github_client.issues(repo_id, state: 'closed').map(&:to_h)
+    }
+  end
 
   def detect_repo_id(*urls)
     repo_url = urls.grep(GITHUB_URI_PATTERN).first or return nil

@@ -1,5 +1,9 @@
 # AnyGood Changelog
 
+## 0.0.5 - Jan 29, 2018
+
+* Basic gem info header
+
 ## 0.0.4 - Jan 29, 2018
 
 * More friendly "gem not found" message

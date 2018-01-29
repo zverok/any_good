@@ -31,6 +31,8 @@ class AnyGood
   end
 
   def report
+    puts description
+
     self.class.meters.each do |meter|
       puts meter.call(@data).format
     end
@@ -80,6 +82,14 @@ class AnyGood
 
   private
 
+  def description
+    "%{name} (GitHub %{repo})\n  %{description}" % {
+      name: @data.gem_info['name'],
+      description: @data.gem_info['info'],
+      repo: @data.repo&.[](:html_url) || '—'
+    }
+  end
+
   def fetch_gem
     {
       gem_info: Gems.info(name),
@@ -102,6 +112,8 @@ class AnyGood
       # open_prs: @github_client.issues(repo_id, state: 'open').map(&:to_h)
       # closed_prs: @github_client.issues(repo_id, state: 'closed').map(&:to_h)
     }
+  rescue Octokit::TooManyRequests
+    abort('GitHub: too many requests. Try `GITHUB_ACCESS_TOKEN=<yourtoken> any_good <gem_name>` for higher limits.')
   end
 
   def detect_repo_id(*urls)

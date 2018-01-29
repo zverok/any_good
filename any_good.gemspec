@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name     = 'any_good'
-  s.version  = '0.0.4'
+  s.version  = '0.0.5'
   s.authors  = ['Victor Shepelev']
   s.email    = 'zverok.offline@gmail.com'
   s.homepage = 'https://github.com/zverok/any_good'

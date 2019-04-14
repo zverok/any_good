@@ -48,7 +48,7 @@ class AnyGood
       when Date, Time
         diff = TimeMath.measure(value, Time.now)
         unit, num = diff.detect { |_, v| !v.zero? }
-        "#{num} #{unit} ago"
+        "#{num} #{num == 1 ? unit.to_s.chomp('s') : unit} ago"
       else
         fail ArgumentError, "Unformattable #{value.inspect}"
       end
